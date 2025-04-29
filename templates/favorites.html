@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Outfits</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/FYqzgVn/heart.png"> 
+</head>
+
+<body>
+    <div>
+        <button class="menubuttons"><a href="/home">Home</a></button>
+        <button class="menubuttons"><a href="closet">Closet</a></button>
+        <button class="menubuttons"><a class="active" href="/favorites">Outfits</a></button>
+        <button class="menubuttons"><a href="/logout">Logout</a></button>
+    </div>
+    <br>
+    <h2>• —– ٠ ✤ ٠ —– • · {{ username }}'s Favorite Outfits · • —– ٠ ✤ ٠ —– •</h2>
+    <hr>
+    <br>
+    <div class="outfits-container"> 
+        {% for outfit_data in outfits_data %}
+        {% if outfit_data[1] is not none and outfit_value != ''%}
+            <div class="outfit-block">
+                <h3>{{ outfit_data[0] }}</h3>
+                <div class="outfit-container">
+                    {% for outfit_value in outfit_data[1].split(',') %}
+                        {% if outfit_value is not none and outfit_value != ''%}
+                            <img src="data:image/png;base64, {{ outfit_value }}" class="size">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <form action="/remove_outfit" method="post">
+                    <input type="hidden" name="outfit_name" value="{{ outfit_data[0] }}">
+                    <input type="submit" value="Remove Outfit">
+                </form> 
+            </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</body>
+</html>
+
+
+<style>
+.menubuttons {
+    background-color: rgb(255, 255, 255);
+    overflow: hidden;
+    border-radius: 1vh;
+    width: relative;
+}
+.menubuttons a {
+    float: left;
+    color: #000000;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+.menubuttons a:hover {
+    background-color: rgb(132, 171, 255);
+    color: black;
+    border-radius: 1vh;
+}
+.menubuttons a.active {
+    background-color: blue;
+    color: white;
+    font-weight: bold;
+    border-radius: 1vh;
+}
+/* Style for the main container of all outfits */
+.outfits-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start; 
+}
+/* Style for each individual outfit block */
+.outfit-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+/* Style for the outfit container */
+.outfit-container {
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    gap: 10px; 
+}
+/* image size */
+.size {
+    width: 150px;
+    height: 150px;
+}
+h2 {
+    text-align: center;
+    color:black;  
+}
+body {
+    font-family: 'Lucida Console', Monaco, monospace; 
+    background-color: rgb(239, 252, 255);
+}
+</style>

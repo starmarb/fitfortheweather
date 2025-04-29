@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Closet</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/f1w96WF/wardrobe.png"> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.4.2/tinycolor.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <button class="menubuttons"><a href="/home">Home</a></button>
+        <button class="menubuttons"><a class="active" href="closet">Closet</a></button>
+        <button class="menubuttons"><a href="/favorites">Outfits</a></button>
+        <button class="menubuttons"><a href="/logout">Logout</a></button>
+    </div>
+    <br>
+    <h2>• —– ٠ ✤ ٠ —– • · {{ username }}'s Closet · • —– ٠ ✤ ٠ —– • </h2> 
+    <hr>
+    <br>
+    <h3>Explore and Edit Your Closet Here:</h3>
+    <div>
+        <form action="/add_item" method="post" enctype="multipart/form-data">
+            <br>
+            <br>
+            <label>Upload an image for a new clothing item: </label>
+            <input type="file" name="img" id="img" accept="image/*">
+            <br>
+            <br>
+            <label>Add a short description: </label>
+            <input type="text" name="description" id="desc">
+            <br>
+            <br>
+            <label>Select the type of clothing item it is:</label>
+            <select name="type" id="type">
+                <option value="Short-Sleeved Shirt">Short-Sleeved Shirt</option>
+                <option value="Long-Sleeved Shirt">Long-Sleeved Shirt</option>
+                <option value="Outerwear">Outerwear</option>
+                <option value="Short Pants">Short Pants</option>
+                <option value="Long Pants">Long Pants</option>
+                <option value="Short Skirt">Short Skirt</option>
+                <option value="Long Skirt">Long Skirt</option>
+                <option value="Short One-Piece">Short One-Piece</option>
+                <option value="Long One-Piece">Long One-Piece</option>
+            </select>
+            <br>
+            <br>
+            <label>Season(s) this item is usually worn in:</label>
+            <br>
+            <input type="checkbox" id="summer" name="season" value="Summer">
+            <label for="summer"> Summer</label><br>
+            <input type="checkbox" id="fall" name="season" value="Fall">
+            <label for="fall"> Fall</label><br>
+            <input type="checkbox" id="winter" name="season" value="Winter">
+            <label for="winter"> Winter</label><br>
+            <input type="checkbox" id="spring" name="season" value="Spring">
+            <label for="spring"> Spring</label><br>
+            <br>
+            <br>
+                         <label>Select the color(s) of the clothing item:</label>
+                         <br>
+                         <input type="color" id="custom_color" name="custom_color">
+                         <button type="button" onclick="addCustomColor()">Add Custom Color</button>
+                         <div id="custom_colors_container"></div>
+            <br>
+            <br>
+            <input type="submit" value="Add item">
+        </form>
+        <br>
+        <br>
+        <strong class="emessage">{{error_message}}</strong>
+        <strong>{{confirmation_message}}</strong>
+        <hr>
+    </div>
+    <br>
+    <h3>All Clothing Items:</h3>
+
+                    <br>
+                    <label>Filter closet by color:</label>
+                    <br>
+                    <div id="filter_colors_container"></div>
+                    <button onclick="filterByColor()">Apply Filter</button>
+                    <input type="hidden" id="itemRemovedFlag" value="{{ 'true' if item_removed else 'false' }}">
+
+                    <script>
+        function updateColorFilters() {
+            var filterContainer = document.getElementById('filter_colors_container');
+            var items = document.getElementsByClassName('clothing-item');
+            var colors = Array.from(filterContainer.getElementsByTagName('input')).map(input => input.value);
+
+            colors.forEach(color => {
+                var colorExists = Array.from(items).some(item => item.getAttribute('data-color').includes(color));
+                if (!colorExists) {
+                    var colorCheckbox = document.getElementById(color + '_filter_colors_container');
+                    if (colorCheckbox) { // Check if the checkbox exists
+                        filterContainer.removeChild(colorCheckbox.nextSibling); // Remove label
+                        filterContainer.removeChild(colorCheckbox); // Remove checkbox
+                    }
+                }
+            });
+        }
+                        function addCustomColor() {
+                            var color = document.getElementById('custom_color').value;
+                            addColor(color, 'custom_colors_container', 'colors'); 
+                            addColorToFilter(color);
+                            saveColor(color); 
+                        }
+
+                        function addColor(color, containerId, inputName) {
+                            var container = document.getElementById(containerId);
+                            var checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.name = inputName;
+                            checkbox.value = color;
+                            checkbox.id = color + '_' + containerId;
+                            var label = document.createElement('label');
+                            label.htmlFor = checkbox.id;
+                            label.style.backgroundColor = color;
+                            label.appendChild(document.createTextNode(color));
+                            container.appendChild(checkbox);
+                            container.appendChild(label);
+                            container.appendChild(document.createElement('br'));
+                        }
+
+                        function addColorToFilter(color) {
+                            addColor(color, 'filter_colors_container', 'color_filter');
+                        }
+                    
+                        function saveColor(color) {
+                            var savedColors = localStorage.getItem('customColors');
+                            savedColors = savedColors ? JSON.parse(savedColors) : [];
+                            if (!savedColors.includes(color)) {
+                                savedColors.push(color);
+                                localStorage.setItem('customColors', JSON.stringify(savedColors));
+                            }
+                        }
+                    
+                        function loadSavedColors() {
+                            var savedColors = localStorage.getItem('customColors');
+                            if (savedColors) {
+                                JSON.parse(savedColors).forEach(color => {
+                                    if (colorExistsInItems(color)) {
+                                        addColorToFilter(color);
+                                    }
+                                });
+                            }
+                        }
+
+                        function colorExistsInItems(color) {
+                            var items = document.getElementsByClassName('clothing-item');
+                            return Array.from(items).some(item => item.getAttribute('data-color').includes(color));
+                        }
+                    
+                        window.onload = function() {
+                        loadSavedColors();
+                        var itemRemoved = document.getElementById('itemRemovedFlag').value === 'true';
+                        if (itemRemoved) {
+                            updateColorFilters();
+                        }
+                    };
+                        
+                        document.getElementById('add_item').addEventListener('submit', function(e) {
+                            e.preventDefault(); 
+                            document.getElementById('custom_colors_container').innerHTML = '';
+                        });
+                    
+                    function filterByColor() {
+                        var selectedColors = Array.from(document.getElementsByName("color_filter"))
+                            .filter(checkbox => checkbox.checked)
+                            .map(checkbox => checkbox.value.toLowerCase());
+                    
+                        var items = document.getElementsByClassName("clothing-item");
+                    
+                        for (var i = 0; i < items.length; i++) {
+                            var item = items[i];
+                            var itemColors = item.getAttribute("data-color");
+                            itemColors = itemColors ? itemColors.toLowerCase().split(', ') : [];
+                    
+                            if (!selectedColors.length || (selectedColors.length && selectedColors.some(color => itemColors.includes(color)))) {
+                                item.style.display = "table-cell";
+                            } else {
+                                item.style.display = "none";
+                            }
+                        }
+                    }
+                </script>
+
+    {% if all_items %}
+    <div>
+        <ul>
+            <h3>Outerwears</h3>
+            <table id="outerwear">
+                <tbody>
+                    <tr>
+                        {% for item in all_items if item[4] == 'Outerwear' %}
+                        <td class="clothing-item" data-color="{{ item[9] | lower}}">
+                                <img src="data:image/png;base64,{{ item[3] }}" class="size">
+                                <p>{{ item[2] }}</p>
+                                <button><a href="/remove_item/{{ item[0] }}">Remove</a></button>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+            <hr>
+            <br>
+            <h3>One-Pieces</h3>
+            <table id="onepiece">
+                <tbody>
+                    <tr>
+                        {% for item in all_items if item[4] in ['Long One-Piece', 'Short One-Piece'] %}
+                        <td class="clothing-item" data-color="{{ item[9] | lower}}">
+                                <img src="data:image/png;base64,{{ item[3] }}" class="size">
+                                <p>{{ item[2] }}</p>
+                                <button><a href="/remove_item/{{ item[0] }}">Remove</a></button>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+            <hr>
+            <br>
+            <h3>Tops</h3>
+            <table id="top">
+                <tbody>
+                    <tr>
+                        {% for item in all_items if item[4] in ['Long-Sleeved Shirt', 'Short-Sleeved Shirt'] %}
+                        <td class="clothing-item" data-color="{{ item[9] | lower}}">
+                                <img src="data:image/png;base64,{{ item[3] }}" class="size">
+                                <p>{{ item[2] }}</p>
+                                <button><a href="/remove_item/{{ item[0] }}">Remove</a></button>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+            <hr>
+            <br>
+            <h3>Bottoms</h3>
+            <table id="bottoms">
+                <tbody>
+                    <tr>
+                        {% for item in all_items if item[4] not in ['Outerwear', 'Long One-Piece', 'Short One-Piece', 'Long-Sleeved Shirt', 'Short-Sleeved Shirt'] %}
+                        <td class="clothing-item" data-color="{{ item[9] | lower}}">
+                                <img src="data:image/png;base64,{{ item[3] }}" class="size">
+                                <p>{{ item[2] }}</p>
+                                <button><a href="/remove_item/{{ item[0] }}">Remove</a></button>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+            <hr>
+            <br>
+        </ul>
+    </div>
+{% endif %}
+</body>
+</html>
+
+<style>
+
+body {
+    background-color: rgb(0, 81, 255);
+}
+.menubuttons {
+    background-color: rgb(255, 255, 255);
+    overflow: hidden;
+    border-radius: 1vh;
+    width: relative;
+}
+.menubuttons a {
+  float: left;
+  color: #000000;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+.menubuttons a:hover {
+    background-color: rgb(132, 171, 255);
+    color: black;
+    border-radius: 1vh;
+}
+.menubuttons a.active {
+    background-color: green;
+    color: white;
+    font-weight: bold;
+    border-radius: 1vh;
+}
+/* image size */
+.size {
+    width: 150px;
+    height: 150px;
+}
+ul {
+  list-style-type: none;
+  padding-left: none;
+  margin-left: none;
+}
+a {
+    text-decoration: none;
+}
+table td {
+    padding-right: 15px;
+    color:black;  
+}
+/* style for clothing categories */
+table {
+    display: block;
+    overflow-x:scroll;
+    width: 100%;
+    color:black; 
+    background-color: white; 
+}
+h2 {
+    text-align: center;
+    color:black;  
+}
+h3 {
+    text-align: center;
+    color:black;  
+}
+body {
+    font-family: 'Lucida Console', Monaco, monospace; 
+    background-color: rgb(239, 252, 255);
+}
+/* style for error message */
+.emessage {
+    font-family: 'Lucida Console', Monaco, monospace;
+    font-size: small;
+    color: red; 
+}
+</style>

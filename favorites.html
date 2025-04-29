@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Outfits</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/FYqzgVn/heart.png"> 
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+
+<body>
+    <div class="topnav">
+        <a href="/home">Home</a>
+        <a href="closet">Closet</a>
+        <a class="active" href="/favorites">Outfits</a>
+        <a href="/logout">Logout</a>
+    </div>
+    <h1>{{ username }}'s Favorite Outfits</h1>
+    <div class="outfits-container"> 
+        {% for outfit_data in outfits_data %}
+        {% if outfit_data[1] is not none and outfit_value != ''%}
+            <div class="outfit-block"> 
+                <div class="outfit-container">
+                    {% for outfit_value in outfit_data[1].split(',') %}
+                        {% if outfit_value is not none and outfit_value != ''%}
+                            <img src="data:image/png;base64, {{ outfit_value }}" class="size">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <h2>{{ outfit_data[0] }}</h2>
+                <form action="/remove_outfit" method="post">
+                    <input type="hidden" name="outfit_name" value="{{ outfit_data[0] }}">
+                    <input type="submit" value="Remove Outfit">
+                </form>
+            </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</body>
+</html>
+
+
+<style>
+/* Add a black background color to the top navigation */
+.topnav {
+    background-color: rgb(0, 81, 255);
+    overflow: hidden;
+    border-radius: 1vh;
+    width: relative;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+    background-color: rgb(132, 171, 255);
+    color: black;
+    border-radius: 1vh;
+}
+
+/* Add a color to the active/current link */
+.topnav a.active {
+    background-color: yellow;
+    color: black;
+    border-radius: 1vh;
+}
+/* Style for the main container of all outfits */
+.outfits-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start; 
+}
+
+/* Style for each individual outfit block */
+.outfit-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Style for the outfit container */
+.outfit-container {
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    gap: 10px; 
+}
+
+.size {
+    width: 150px;
+    height: 150px;
+}
+
+body {
+    font-family: 'Lucida Console', Monaco, monospace; 
+    background-color: rgb(255, 255, 255);
+}
+</style>

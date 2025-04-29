@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background-color: rgb(0, 81, 255);
+            background-image: url('https://static.vecteezy.com/system/resources/previews/008/847/308/non_2x/isolated-white-folded-t-shirt-free-png.png');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+            background-size: 85%;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+        }
+        .center-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 50vw; 
+        }
+        .Title {
+            width: 30vw;
+            height: auto;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        input {
+            margin-bottom: 1vh;
+            width: 70%;
+            font-family: 'Lucida Console', Monaco, monospace; 
+        }
+        .caption {
+            margin-top: 3vh;
+            font-family: 'Lucida Console', Monaco, monospace; 
+            font-weight: bold;
+        }
+        button {
+            background-color: rgb(255, 255, 255);
+            color: black;
+            margin-left: 1vh;
+            border-radius: 1vh;
+        }
+        button:hover {
+            background-color: yellow;
+        }
+        a {
+            text-decoration: none;
+        }
+        .message {
+            font-family: 'Lucida Console', Monaco, monospace;
+            font-size: small;
+            color: red; 
+        }
+    </style>
+</head>
+<body>
+    <div class="center-container">
+        <img src="https://i.ibb.co/MhG8Nrg/logintext.png" class="Title">
+        <form method="POST" action="/login">
+            <input type="text" name="username" placeholder="Username">
+            <input type="password" name="password" placeholder="Password">
+            <input type="submit" value="Log In">
+            <strong class="message">{{error_message}}</strong>
+            <p class="caption">Don't have an account?<button><a href="signup" class="caption"> Sign up</a></button></p>
+        </form>
+    </div>
+</body>
+</html>

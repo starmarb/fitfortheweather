@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/Ny6PZ7R/home.png"> 
+</head>
+
+<body>
+    <div>
+        <button class="menubuttons"><a class="active" href="/home">Home</a></button>
+        <button class="menubuttons"><a href="closet">Closet</a></button>
+        <button class="menubuttons"><a href="/favorites">Outfits</a></button>
+        <button class="menubuttons"><a href="/logout">Logout</a></button>
+    </div>
+    <div class="content">
+        <br>
+        <h2>• —– ٠ ✤ ٠ —– • · Check out your <i>'Fits for the Weather</i>, {{ username }}! · • —– ٠ ✤ ٠ —– • </h2>
+        <hr>
+        <br>
+        <br>
+        <div class="box">
+            <mark><strong>🕰 Date & Time:</strong> <span id="datetime"></span></mark><br>
+            <mark><strong>&#9729; Weather:</strong> <span id="weather"></span></mark>
+        </div>
+        <br>
+        <br>
+        <h3>Clothing Recommendations for Today's Weather:</h3> <span id="clothes"></span>
+        <br>
+        Select an item from each row to build and save an outfit with your favorite items!
+        <br>
+        <form id="submitform" action="/saveoutfit" method="post">
+            <h2 class="category-heading"><img src="https://i.ibb.co/G3WNKpJ/Pokeball-medium-Res.png" alt="Icon" class="category-icon">Outerwear</h2>
+            <table id="outerwears">
+                <tr id="row1"></tr>
+            </table>
+            <h2 class="category-heading"><img src="https://i.ibb.co/D44Ccpn/de2g8c2-bc56f0d4-fc72-4ec0-964b-b8e3ab6cc69f.png" alt="Icon" class="category-icon">One-Pieces</h2>
+            <table id="onepieces">
+                <tr id="row2"></tr>
+            </table>
+            <h2 class="category-heading"><img src="https://i.ibb.co/c161B8S/cleaned-up-my-20-year-old-simba-plushie-last-night-v0-xtjh43rvf8ub1.png" alt="Icon" class="category-icon">Tops</h2>
+            <table id="tops">
+                <tr id="row3"></tr>
+            </table>
+            <h2 class="category-heading"><img src="https://i.ibb.co/L5zPWMc/sponge-bob-ice-cream-sandwich-designer-toy-2.png" alt="Icon" class="category-icon">Bottoms</h2>
+            <table id="bottoms">
+                <tr id="row4"></tr>
+            </table>
+            <br>
+            <br>
+            <label>Name your outfit: <input type="text" name="outfitname" id="outfitname"></label>
+            <input type="submit" name="saveitems" value="Save Outfit">
+            <!-- <br>
+            <br>
+            <strong class="emessage">{{error_message}}</strong> -->
+            <br>
+            <br>
+        </form>
+    </div>
+    <script>
+        const datetimeEl = document.getElementById('datetime');
+        datetimeEl.textContent = new Date().toLocaleString();
+   
+        const weatherEl = document.getElementById('weather');
+        const API_KEY = '685993e656a6dfc177fb827ec87333a1';
+        const CITY = 'New Haven';
+        const ENDPOINT = `https://api.openweathermap.org/data/2.5/weather?q=${CITY}&units=metric&appid=${API_KEY}`;
+
+        const xhr = new XMLHttpRequest();
+
+        xhr.open('GET', ENDPOINT, true);
+        xhr.onload = function() {
+            if (this.status === 200) {
+                const data = JSON.parse(this.responseText);
+                const temperature = data.main.temp;
+                const description = data.weather[0].description;
+                weatherEl.textContent = `${temperature}°C, ${description}`;
+            } else {
+                weatherEl.textContent = 'Unable to fetch weather data.';
+            }
+        };
+        xhr.onerror = function() {
+            console.error('Error fetching weather:', this.status, this.statusText);
+            weatherEl.textContent = 'Unable to fetch weather data.';
+        };
+        xhr.send();
+
+
+        xhr.onload = function() {
+            if (this.status === 200) {
+                const data = JSON.parse(this.responseText);
+                const temperature = data.main.temp;
+                const description = data.weather[0].description;
+                weatherEl.textContent = `${temperature}°C, ${description}`;
+               
+                const formData = new FormData();
+                formData.append('temperature', temperature);
+
+                const clothesEl = document.getElementById('clothes');
+                const seasonXhr = new XMLHttpRequest();
+                seasonXhr.open('POST', '/getclothes', true);
+                seasonXhr.onload = function() {
+                    if (this.status === 200) {
+                        const clothingData = JSON.parse(this.responseText);
+
+                        clothesEl.innerHTML = '';
+                        let table;
+                        let row;
+                        let name;
+                        let numouterwear = 0;
+                        let numonepiece = 0;
+                        let numtop = 0;
+                        let numbottom = 0;
+
+                        for (const clothingImg in clothingData) {
+                            if (clothingData[clothingImg] === "Outerwear") {
+                                table = document.getElementById('outerwears');
+                                row = document.getElementById('row1');
+                                name = 'outerwear';
+                                numouterwear++;
+                            }
+                            else if (clothingData[clothingImg] === "Long One-Piece" || clothingData[clothingImg] === "Short One-Piece") {
+                                table = document.getElementById('onepieces');
+                                row = document.getElementById('row2');
+                                name = 'onepiece';
+                                numonepiece++;
+                            }
+                            else if (clothingData[clothingImg] === "Long-Sleeved Shirt" || clothingData[clothingImg] === "Short-Sleeved Shirt") {
+                                table = document.getElementById('tops');
+                                row = document.getElementById('row3');
+                                name = 'top';
+                                numtop++;
+                            }
+                            else {
+                                table = document.getElementById('bottoms');
+                                row = document.getElementById('row4');
+                                name = 'bottom';
+                                numbottom++;
+                            }
+
+                                const imgCell = row.insertCell();
+                                const img = document.createElement('img');
+                                img.src = 'data:image/jpeg;base64,' + clothingImg;
+                                var input = document.createElement('input');
+                                input.type = 'radio';
+                                input.name = name;
+                                input.value = clothingImg;
+                                if (name === 'outerwear') {
+                                    input.id = name + numouterwear.toString();
+                                }
+                                else if (name === 'onepiece') {
+                                    input.id = name + numonepiece.toString();
+                                }
+                                else if (name === 'top') {
+                                    input.id = name + numtop.toString();
+                                }
+                                else {
+                                    input.id = name + numbottom.toString();
+                                }
+                                var label = document.createElement('label');
+                                label.htmlFor = input.id;
+                                label.appendChild(img);
+                                imgCell.appendChild(input);
+                                imgCell.appendChild(label);
+                        }
+                
+                    } else {
+                        console.error('Error fetching clothes:', this.status, this.statusText);
+                    }
+                };
+                seasonXhr.onerror = function() {
+                    console.error('Error during AJAX request for clothes.');
+                };
+                seasonXhr.send(formData);
+
+            } else {
+                weatherEl.textContent = 'Unable to fetch weather data.';
+            }
+        };
+
+        function saveItems() {
+            var senditems = [null, null, null, null];
+            let radioButtons1 = document.getElementsByName('outerwear');
+            for (let radio of radioButtons1) {
+                if (radio.checked) {
+                    senditems[0] = radio.value;
+                }
+            }
+            let radioButtons2 = document.getElementsByName('onepiece');
+            for (let radio of radioButtons2) {
+                if (radio.checked) {
+                    senditems[1] = radio.value;
+                }
+            }
+            let radioButtons3 = document.getElementsByName('top');
+            for (let radio of radioButtons3) {
+                if (radio.checked) {
+                    senditems[2] = radio.value;
+                }
+            }
+            let radioButtons4 = document.getElementsByName('bottom');
+            for (let radio of radioButtons4) {
+                if (radio.checked) {
+                    senditems[3] = radio.value;
+                }
+            }
+            return senditems;
+        }
+
+        function saveitemForm() {
+        var senditems = saveItems();
+        for (var i = 0; i < senditems.length; i++) {
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "senditems[]"; 
+            input.value = senditems[i];
+            document.getElementById("submitform").appendChild(input);
+        }
+    }
+
+    document.getElementById("submitform").addEventListener("submit", function(event) {
+    saveitemForm();
+});
+    </script>
+</body>
+</html>
+
+<style>
+.menubuttons {
+    background-color: rgb(255, 255, 255);
+    overflow: hidden;
+    border-radius: 1vh;
+    width: relative;
+}
+.menubuttons a {
+    float: left;
+    color: #000000;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+.menubuttons a:hover {
+    background-color: rgb(132, 171, 255);
+    color: black;
+    border-radius: 1vh;
+}
+/* Add a color to the active/current link */
+.menubuttons a.active {
+    background-color: red;
+    color: white;
+    font-weight: bold;
+    border-radius: 1vh;
+}
+.content {
+    text-align: center;
+    color:black; 
+}
+.category-heading {
+    text-align: left;
+    display: inline-block;
+    width: 100%;
+    color:black; 
+}
+.category-icon {
+    height: 2em; /* Adjust this value to make the icon larger */
+    width: 2em; /* Adjust this value to make the icon wider */
+    vertical-align: middle; /* Aligns the icon with the middle of the text */
+    margin-right: 0.3em; /* Adds some space between the icon and the text */
+}
+table {
+    margin: auto; 
+    display: table;
+    width: 100%; 
+    max-width: none;
+    overflow-x: auto;
+    color:black;  
+    background-color: rgb(255, 255, 255);
+}
+table td {
+    padding-right: 15px;
+    text-align: center;
+    color:black;  
+}
+ul {
+    list-style-type: none;
+    color:black;  
+}
+li {
+    display: inline-block;
+    color:black; 
+}
+input[type="checkbox"][id^="checkmark"] {
+    display: none;
+    color:black;  
+}
+/* style for images */
+label {
+    border: 1px solid #fff;
+    padding: 10px;
+    display: block;
+    position: relative;
+    margin: 10px;
+    cursor: pointer;
+    color:black;  
+}
+label:before {
+    background-color: white;
+    color:black; 
+    content: " ";
+    display: block;
+    border-radius: 50%;
+    border: 1px solid grey;
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    line-height: 28px;
+    transition-duration: 0.4s;
+    transform: scale(0);
+}
+label img {
+    height: 150px;
+    width: 150px;
+    transition-duration: 0.2s;
+    transform-origin: 50% 50%;
+}
+/* style for checkmark/selecting items */
+:checked + label {
+    border-color: #ffffff;
+}
+:checked + label:before {
+    content: "✓";
+    color: white;
+    background-color: rgb(0, 81, 255);
+    transform: scale(1);
+}
+:checked + label img {
+    transform: scale(0.9);
+    box-shadow: 0 0 15px rgb(255, 255, 255);
+    z-index: -1;
+}
+table td {
+    padding-right: 15px;
+    color:black;  
+}
+/* style for clothing categories */
+table {
+    display: block;
+    overflow-x:scroll;
+    width: 50%;
+    color:black;  
+}
+/* style for radio buttons (none) */
+input[type='radio'] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+}
+body {
+    font-family: 'Lucida Console', Monaco, monospace; 
+    background-color: rgb(239, 252, 255);
+    color:black;  
+}
+/* style for error message */
+.emessage {
+            font-family: 'Lucida Console', Monaco, monospace;
+            font-size: small;
+            color: red; 
+        }
+</style>
