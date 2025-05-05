@@ -1,4 +1,7 @@
-Fit for the Weather 
+Fit for the Weather :
+[See Live Preview here](https://fitfortheweather.onrender.com/)
+[See Tour Video here](https://drive.google.com/file/d/1qzjAJBfVW5mIHE9Gnab2ZHlwCp2t7DqD/view?usp=sharing)
+
 A virtual closet assistant to help users build and create their own outfits from their own closet that is "fit for the weather"--based on the day's weather information, specific items in the closet are recommended for the user to wear that day. 
 
 This project started as a collaborative project for CPSC419: Full Stack by Philomena Wu, Sammi Kwon, Fatima Kamara. It is now being expanded as a personal project by Sammi Kwon. 
