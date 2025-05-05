@@ -7,15 +7,8 @@ import sqlite3
 
 def init_db():
     conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        )
-    """)
-    conn.commit()
+    with open('closet.sql', 'r') as f:
+        conn.executescript(f.read())
     conn.close()
 
 init_db()
