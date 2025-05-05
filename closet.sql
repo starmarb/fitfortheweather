@@ -1,5 +1,7 @@
 -- Database schema
 DROP TABLE IF EXISTS clothes;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS outfit;
 
 CREATE TABLE clothes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
