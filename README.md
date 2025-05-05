@@ -1,9 +1,7 @@
-Project Group 9: Philomena Wu, Sammi Kwon, Fatima Kamara
-Project Name: 'Fit For The Weather
+Fit for the Weather 
+A virtual closet assistant to help users build and create their own outfits from their own closet that is "fit for the weather"--based on the day's weather information, specific items in the closet are recommended for the user to wear that day. 
 
-Motivation: 
-    Create a virtual closet assistant to help users build and create their own outfits with items from their own closet that would be "fit for the weather." 
-    *As we don't monitor what user's upload, items aren't limited to just their own closet. In fact, we imagine the website could also be used to help user's come up with their own style and visualize their ideal outfits/closet and be be smart with their decision to buy a clothing item they might be interested in but might not work with current items in their own closet.
+This project started as a collaborative project for CPSC419: Full Stack by Philomena Wu, Sammi Kwon, Fatima Kamara. It is now being expanded as a personal project by Sammi Kwon. 
 
 Main features:
 
